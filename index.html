@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Templates 1Win - Sistema Profesional</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            padding: 10px;
+            line-height: 1.6;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 20px);
+        }
+
+        /* Header */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .app-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-icon {
+            font-size: 32px;
+        }
+
+        .btn-add {
+            background: white;
+            color: var(--primary);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,255,255,0.3);
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--light);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .search-box {
+            position: sticky;
+            top: 0;
+            background: var(--light);
+            padding-bottom: 15px;
+            z-index: 10;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .category {
+            margin-bottom: 15px;
+        }
+
+        .category-header {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .category-header:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .category-header.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .category-icon {
+            transition: transform 0.3s;
+            font-size: 18px;
+        }
+
+        .category-header.active .category-icon {
+            transform: rotate(180deg);
+        }
+
+        .subcategories {
+            display: none;
+            padding: 10px 0;
+            padding-left: 10px;
+        }
+
+        .subcategories.active {
+            display: block;
+        }
+
+        .subcategory {
+            margin-bottom: 10px;
+        }
+
+        .subcategory-title {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 13px;
+            padding: 8px 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .template-btn {
+            width: 100%;
+            text-align: left;
+            padding: 10px 14px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+
+        .template-btn:hover {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+            transform: translateX(5px);
+        }
+
+        .template-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .template-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .template-path {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 4px;
+        }
+
+        .text-display {
+            flex: 1;
+            background: var(--light);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--dark);
+            white-space: pre-wrap;
+            overflow-y: auto;
+        }
+
+        .text-display.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            font-style: italic;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            opacity: 0.5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--success);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px 24px;
+            font-size: 20px;
+            font-weight: 700;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 4px;
+        }
+
+        .modal-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 2000;
+            animation: toastSlideIn 0.3s ease-out;
+        }
+
+        @keyframes toastSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast-icon {
+            font-size: 24px;
+        }
+
+        .toast-message {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Stats Badge */
+        .stats-badge {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+
+            .app-container {
+                border-radius: 0;
+                height: 100vh;
+            }
+
+            .app-header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .app-header h1 {
+                font-size: 20px;
+            }
+
+            .btn-add {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 100;
+                max-height: 100vh;
+            }
+
+            .sidebar.mobile-open {
+                display: block;
+            }
+
+            .content-area {
+                padding: 20px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .toast {
+                right: 20px;
+                left: 20px;
+                bottom: 20px;
+            }
+
+            .mobile-menu-btn {
+                display: block !important;
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+                color: white;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+                z-index: 99;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="app-header">
+            <h1>
+                <span class="header-icon">📋</span>
+                Templates 1Win
+                <span class="stats-badge" id="templateCount">0 templates</span>
+            </h1>
+            <button class="btn-add" onclick="openModal()">
+                <span>➕</span>
+                Agregar Template
+            </button>
+        </div>
+
+        <div class="main-layout">
+            <div class="sidebar" id="sidebar">
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        placeholder="🔍 Buscar templates..." 
+                        id="searchInput"
+                        onkeyup="filterTemplates()"
+                    >
+                </div>
+                <div id="categoriesList"></div>
+            </div>
+
+            <div class="content-area">
+                <div class="content-header">
+                    <div>
+                        <div class="template-title" id="currentTitle">Seleccione un template</div>
+                        <div class="template-path" id="currentPath"></div>
+                    </div>
+                </div>
+
+                <div class="text-display empty" id="textDisplay">
+                    <div class="empty-icon">📝</div>
+                    <div>Seleccione un template del menú lateral</div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="editTemplate()" id="btnEdit" style="display: none;">
+                        <span>✏️</span>
+                        Editar
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteTemplate()" id="btnDelete" style="display: none;">
+                        <span>🗑️</span>
+                        Eliminar
+                    </button>
+                    <button class="btn btn-primary" onclick="copyText()">
+                        <span>📋</span>
+                        Copiar Texto
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+
+    <!-- Modal -->
+    <div class="modal" id="templateModal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalTitle">➕ Agregar Nuevo Template</div>
+            <div class="modal-body">
+                <form id="templateForm">
+                    <div class="form-group">
+                        <label class="form-label">Categoría *</label>
+                        <select class="form-select" id="categorySelect" required>
+                            <option value="">-- Seleccione --</option>
+                        </select>
+                        <div class="form-hint">O crear una nueva abajo</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nueva Categoría (opcional)</label>
+                        <input type="text" class="form-input" id="newCategory" placeholder="Ej: Nuevos Templates">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Subcategoría *</label>
+                        <input type="text" class="form-input" id="subcategory" placeholder="Ej: Solicitud de datos" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Título del Template *</label>
+                        <input type="text" class="form-input" id="templateTitle" placeholder="Ej: Solicitar comprobante" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Mensaje *</label>
+                        <textarea class="form-textarea" id="templateMessage" placeholder="Escribe el contenido del template aquí..." required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="closeModal()">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveTemplate()">
+                    <span>💾</span>
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span class="toast-message" id="toastMessage">Operación exitosa</span>
+    </div>
+
+    <script>
+        let templates = {};
+        let currentTemplate = null;
+        let editMode = false;
+
+        // Datos iniciales del Excel
+        const initialData = {
+            "Generales": {
+                "Saludos": {
+                    "¡Hola!": "¡Hola!",
+                    "Chat reactivado": "Nos alegramos de tenerte de vuelta."
+                },
+                "Solicitud de datos": {
+                    "Pedir ID": "Por favor, proporciónenos el ID de su cuenta de juego.",
+                    "Captura de pantalla del error": "Por favor, envíe una captura de pantalla del error que presenta.",
+                    "Captura de pantalla de evidencia": "Por favor, envíe una captura de pantalla de la situación que está presentando para poder corroborar su caso."
+                },
+                "Despedidas": {
+                    "Sin reacción del usuario": "Si por ahora no es buen momento con la atención, le agradezco su contacto y espero que podamos platicar mas adelante para continuar ayudándole.\\n¡Tenga buen día!",
+                    "Cliente satisfecho": "Me alegro de haberle podido ayudar el día de hoy, seguimos atentos para ayudarle.\\n¡Tenga un excelente día!"
+                }
+            },
+            "Depositos": {
+                "Solicitud de datos": {
+                    "Solicitar comprobante": "Por favor, envíe un comprobante de pago desde su aplicación bancaria para poder corroborar su caso.",
+                    "Comprobante sin datos": "He revisado su comprobante y no cuenta con los datos mínimos para poder corroborar su caso, asegúrese que su comprobante contenga monto, fecha y hora, por favor.",
+                    "Comprobante sin COELSA ID": "He revisado su comprobante y no cuenta con los datos mínimos para poder corroborar su caso, en este caso hace falta el COELSA ID en su comprobante de pago, por favor, envíe el comprobante completo para la revisión.",
+                    "Estado de cuenta o extracto bancario": "Por favor, envíe un estado de cuenta, extracto bancario o estado de movimientos (Según lo conozcan en su banco) para poder revisar su caso."
+                },
+                "Información general": {
+                    "¿Cómo depositar?": "Para realizar un deposito es muy sencillo.\\n\\nDiríjase al botón \"recarga\", seleccione su método de pago de preferencia, especifique el monto y el resto de información que se solicite y al final realice el pago.",
+                    "No encuentro un método de pago": "En este caso, significa que ahora mismo ese método no estaría disponible, le recomiendo utilizar otro método de pago que si se encuentre activo."
+                },
+                "Estatus": {
+                    "Depositado": "He revisado su cuenta y el deposito indicado ya se encuentra pagado, por favor, revíselo en su histórico de pago en su cuenta de juego.",
+                    "Depositó un monto distinto": "He revisado su cuenta, pero no localizo su solicitud con el monto transferido. Revisaré más a fondo.\\nRecuerde que, si ha solicitado depositar un monto, debe transferir exactamente el mismo monto; de lo contrario, su pago puede demorar más de lo esperado.",
+                    "Dentro de las 24 horas": "La recarga puede tardar hasta 24 horas en reflejarse, aunque normalmente se acredita antes.\\nSi pasado ese tiempo no ve los fondos, contáctenos nuevamente por este medio.",
+                    "Cancelado": "Su depósito no pudo procesarse porque fue cancelado.\\nSe generará un ticket con soporte para gestionar la devolución de su saldo, aunque aún no vea el reembolso reflejado.",
+                    "Más de 24 horas sin acreditar": "El plazo máximo de acreditación (24 horas) ya fue excedido, por lo que existe un error.\\nGeneraré un ticket a soporte para solucionarlo, ya sea acreditando sus fondos o devolviendo el saldo según la revisión.",
+                    "No existe solicitud": "He revisado su cuenta y no existe ninguna solicitud en 1win que coincida con el monto, fecha y hora de su comprobante.\\nPor favor confirme si reutilizó datos de una solicitud anterior o si realizó primero la transferencia sin generar la solicitud."
+                },
+                "Cryptomoneda": {
+                    "Monto menor al minimo": "El pago no puede procesarse porque no se cumplieron las condiciones.\\nAl usar criptodivisas, verifique el monto mínimo y la red correcta, ya que un error puede provocar la pérdida irreversible de los fondos.",
+                    "No llegó en 30 min": "Se generará un ticket con soporte para revisar su transacción.\\nEnvíe por escrito el Txid, la dirección destino y la dirección origen."
+                },
+                "Jira": {
+                    "Seguimiento: Recien creado": "He dado seguimiento a su caso: ya está creado, pero aún no tiene comentarios por ser reciente.\\nSerá atendido según la carga y el orden de soporte, y permanece en espera de revisión.",
+                    "Seguimiento: En revisión": "Entendemos su preocupación y agradecemos su paciencia.\\nSu ticket está en espera de respuesta del proveedor financiero y estamos trabajando para agilizar la resolución; quedamos atentos ante cualquier consulta adicional.",
+                    "Seguimiento: Tiempo excedido": "He dado seguimiento a su caso y, al exceder el tiempo estándar, solicitaremos su priorización inmediata.\\nLa demora se debe a que el proceso está detenido en el proveedor financiero; ya se envió una reclamación y le informaremos cualquier novedad.",
+                    "Solicitar estado de cuenta.": "Su saldo ya fue reembolsado a su cuenta financiera.\\nSi no lo ve reflejado, envíe un estado de cuenta/extracto desde la fecha del depósito hasta hoy para verificarlo; si no sabe cómo obtenerlo, solicite ayuda a su banco y contáctenos nuevamente."
+                }
+            },
+            "Retiros": {
+                "No puede retirar": {
+                    "No ha jugado el 100%": "Los retiros se habilitan tras apostar el 100% del depósito (deportes, casino o póker).\\nAún debe jugar XXX para activarlos; le recomendamos apuestas pequeñas para reducir riesgo. En deportes, la apuesta debe finalizar para que cuente."
+                },
+                "solicitud rechazada": {
+                    "Monto devuelto y apostado": "Su retiro fue rechazado y el saldo regresó de inmediato a su cuenta de juego, donde posteriormente fue apostado.\\nEl rechazo provino del proveedor financiero; le recomendamos usar otro método de pago y revisar el estado de sus solicitudes en el desglose de cuenta.",
+                    "Motivo de rechazo": "Los rechazos pueden deberse a múltiples intentos, bloqueos o límites bancarios, transacciones internacionales, intermitencias o datos incorrectos.\\nComo el rechazo proviene del banco, no vemos el motivo exacto; intente nuevamente verificando cuidadosamente todos los datos."
+                },
+                "Estatus": {
+                    "Retiro depositado": "Su retiro figura como transferido a la información indicada durante la solicitud.\\nSi no recibió el monto, envíe un extracto bancario o estado de cuenta en PDF para generar el reclamo; si no sabe obtenerlo, contacte a su proveedor financiero.",
+                    "En tiempo 24 horas": "El retiro de fondos puede tardar hasta 24 horas, según el procedimiento estándar.\\nSi el plazo se excede, contáctenos por este chat para verificar la información.",
+                    "Sin procesamiento en 24 horas": "Su retiro no fue procesado por una posible intermitencia; le recomendamos cancelarlo y volver a intentarlo.\\nPuede cancelarlo si está pendiente (en amarillo) desde Desglose → ícono X.",
+                    "Mas de 24 horas": "Su retiro excedió el plazo máximo de 24 horas, por lo que se detecta un error.\\nSe generará un ticket con soporte para acreditar el saldo o devolverlo a su cuenta."
+                },
+                "Cuenta bloqueada": {
+                    "Bloqueo manual": "Debido al estatus de su retiro, debe escribir a security@1win.social\\n indicando su ID de cuenta y el motivo.\\nEste paso es necesario para continuar con el retiro; el tiempo de respuesta varía y se recomienda vincular un correo personal en Ajustes para agilizar la atención."
+                },
+                "Información general": {
+                    "Como retirar": "Para realizar un retiro: Perfil → Retiros, elija el método disponible, complete los datos solicitados y ingrese el monto (≤ a su saldo).\\nEsto generará la solicitud de retiro, que será procesada posteriormente.",
+                    "Monto minimo y maximo": "Durante el retiro verá un rango mínimo y máximo permitido junto al campo del monto.\\nCada método de pago tiene límites distintos, por lo que le recomendamos verificarlos antes de retirar.",
+                    "No apárece una opción de pago": "Actualmente, solo están disponibles los métodos que aparecen para retiro; si uno no figura, no puede usarse por ahora, aunque antes haya estado disponible.\\nPuede registrarse en el método activo o esperar a que el anterior vuelva a habilitarse."
+                }
+            },
+            "Bonos y promociones": {
+                "1win coin": {
+                    "Que es 1win coin": "Las Coins son una recompensa para clientes leales y se obtienen al apostar en tragamonedas del casino y apuestas deportivas con dinero real.\\nNo aplican en casino en vivo, ruleta electrónica ni blackjack; no dependen de ganar o perder y no se acreditan en apuestas devueltas o vendidas. Al reunir el mínimo, pueden canjearse por dinero real según las Reglas y la moneda.",
+                    "No puedo canjearlas": "El canje requiere un mínimo de 1200 1win coins.\\nPuede acumularlas apostando en casino o deportes (sin importar el resultado) y completando tareas en la sección FreeMoney.",
+                    "Como canjearlos": "Para canjear coins: icono de perfil → sección Coin → Intercambio → seleccione la cantidad y Canjear.\\nEl mínimo y el tipo de cambio dependen de la moneda; consulte Reglas para más detalles."
+                },
+                "Freespins": {
+                    "Como se usa lo ganado": "Las ganancias de giros gratis se liberan solo tras cumplir las condiciones de la promoción.\\nDebe jugar con saldo real en tragamonedas el monto indicado en la barra antes de que el contador termine; al hacerlo, se acredita automáticamente, sin importar el resultado.",
+                    "¿Qué son?": "Los FreeSpins son giros promocionales que te permiten jugar slots sin usar tu saldo.\\nLas ganancias se acreditan si cumples el requisito de apuesta, algunos requieren depósito, tienen vigencia limitada y umbrales de juego."
+                },
+                "Bonus code": {
+                    "¿Qué son?": "Los bonus codes/vouchers otorgan beneficios como saldo, giros gratis u otros extras.\\nSe entregan por redes sociales, Telegram oficial, notificaciones, SMS o vía VIP; para obtenerlos, únase al grupo oficial de Telegram.",
+                    "¿Cómo canjearlos?": "Para canjear su bonus code: Perfil → sección Bonus Code, ingrese el código y presione Canjear.\\nSi presenta alguna dificultad, indíquelo.",
+                    "¿Cómo canjearlos? En juegos": "Para canjear un bonus code en un juego: ingrese al juego indicado con saldo, abra el menú, seleccione Bonus Code, ingrese el código y canjee.\\nSi el código está en otra moneda, verifique las restricciones y use la correcta para evitar errores.",
+                    "Error de limite de usos": "El error indica que el código está deshabilitado porque alcanzó su límite de uso.\\nLe recomendamos activar notificaciones para usar los códigos apenas estén disponibles."
+                }
+            },
+            "1win Tokens": {
+                "Información general": {
+                    "¿Qué son?": "Los tokens 1Win son fondos virtuales del Clicker que no se canjean por dinero real.\\nPor ahora solo puede acumularlos o usarlos en apuestas dentro del Clicker; su futura conversión dependerá del interés de los usuarios."
+                }
+            }
+        };
+
+        // Cargar templates
+        function loadTemplates() {
+            const saved = localStorage.getItem('templates_1win');
+            if (saved) {
+                templates = JSON.parse(saved);
+            } else {
+                templates = initialData;
+                saveTemplates();
+            }
+            renderCategories();
+            updateStats();
+        }
+
+        // Guardar templates
+        function saveTemplates() {
+            localStorage.setItem('templates_1win', JSON.stringify(templates));
+            updateStats();
+        }
+
+        // Actualizar estadísticas
+        function updateStats() {
+            let count = 0;
+            Object.keys(templates).forEach(cat => {
+                Object.keys(templates[cat]).forEach(sub => {
+                    count += Object.keys(templates[cat][sub]).length;
+                });
+            });
+            document.getElementById('templateCount').textContent = `${count} templates`;
+        }
+
+        // Renderizar categorías
+        function renderCategories() {
+            const container = document.getElementById('categoriesList');
+            container.innerHTML = '';
+
+            Object.keys(templates).sort().forEach(category => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category';
+
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                header.innerHTML = `
+                    ${category}
+                    <span class="category-icon">▼</span>
+                `;
+                header.onclick = () => toggleCategory(category, header);
+
+                const subContainer = document.createElement('div');
+                subContainer.className = 'subcategories';
+                subContainer.id = `sub-${category}`;
+
+                Object.keys(templates[category]).sort().forEach(subcategory => {
+                    const subDiv = document.createElement('div');
+                    subDiv.className = 'subcategory';
+
+                    const subTitle = document.createElement('div');
+                    subTitle.className = 'subcategory-title';
+                    subTitle.textContent = subcategory;
+                    subDiv.appendChild(subTitle);
+
+                    Object.keys(templates[category][subcategory]).sort().forEach(title => {
+                        const btn = document.createElement('button');
+                        btn.className = 'template-btn';
+                        btn.textContent = title;
+                        btn.onclick = () => selectTemplate(category, subcategory, title, btn);
+                        subDiv.appendChild(btn);
+                    });
+
+                    subContainer.appendChild(subDiv);
+                });
+
+                categoryDiv.appendChild(header);
+                categoryDiv.appendChild(subContainer);
+                container.appendChild(categoryDiv);
+            });
+
+            // Poblar select del modal
+            const select = document.getElementById('categorySelect');
+            select.innerHTML = '<option value="">-- Seleccione --</option>';
+            Object.keys(templates).sort().forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                select.appendChild(option);
+            });
+        }
+
+        // Toggle categoría
+        function toggleCategory(category, element) {
+            const subContainer = document.getElementById(`sub-${category}`);
+            const allHeaders = document.querySelectorAll('.category-header');
+            const allSubs = document.querySelectorAll('.subcategories');
+
+            allHeaders.forEach(h => {
+                if (h !== element) h.classList.remove('active');
+            });
+
+            allSubs.forEach(s => {
+                if (s !== subContainer) s.classList.remove('active');
+            });
+
+            element.classList.toggle('active');
+            subContainer.classList.toggle('active');
+        }
+
+        // Seleccionar template
+        function selectTemplate(category, subcategory, title, button) {
+            currentTemplate = { category, subcategory, title };
+            
+            const allBtns = document.querySelectorAll('.template-btn');
+            allBtns.forEach(b => b.classList.remove('active'));
+            button.classList.add('active');
+
+            const message = templates[category][subcategory][title];
+            const display = document.getElementById('textDisplay');
+            display.textContent = message.replace(/\\n/g, '\n');
+            display.classList.remove('empty');
+
+            document.getElementById('currentTitle').textContent = title;
+            document.getElementById('currentPath').textContent = `${category} > ${subcategory}`;
+
+            document.getElementById('btnEdit').style.display = 'flex';
+            document.getElementById('btnDelete').style.display = 'flex';
+
+            // Cerrar menú móvil si está abierto
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('mobile-open');
+            }
+        }
+
+        // Copiar texto
+        function copyText() {
+            const display = document.getElementById('textDisplay');
+            const text = display.textContent;
+
+            if (!text || display.classList.contains('empty')) {
+                showToast('Seleccione un template primero', 'error');
+                return;
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✓ Texto copiado al portapapeles', 'success');
+            }).catch(() => {
+                showToast('Error al copiar', 'error');
+            });
+        }
+
+        // Abrir modal
+        function openModal() {
+            editMode = false;
+            document.getElementById('modalTitle').textContent = '➕ Agregar Nuevo Template';
+            document.getElementById('templateForm').reset();
+            document.getElementById('templateModal').classList.add('show');
+        }
+
+        // Cerrar modal
+        function closeModal() {
+            document.getElementById('templateModal').classList.remove('show');
+        }
+
+        // Guardar template
+        function saveTemplate() {
+            const categorySelect = document.getElementById('categorySelect').value;
+            const newCategory = document.getElementById('newCategory').value.trim();
+            const subcategory = document.getElementById('subcategory').value.trim();
+            const title = document.getElementById('templateTitle').value.trim();
+            const message = document.getElementById('templateMessage').value.trim();
+
+            if (!subcategory || !title || !message) {
+                showToast('Complete todos los campos obligatorios', 'error');
+                return;
+            }
+
+            const category = newCategory || categorySelect;
+            if (!category) {
+                showToast('Seleccione o cree una categoría', 'error');
+                return;
+            }
+
+            if (!templates[category]) templates[category] = {};
+            if (!templates[category][subcategory]) templates[category][subcategory] = {};
+
+            if (editMode && currentTemplate) {
+                // Eliminar el anterior si cambió
+                if (currentTemplate.category !== category || 
+                    currentTemplate.subcategory !== subcategory || 
+                    currentTemplate.title !== title) {
+                    delete templates[currentTemplate.category][currentTemplate.subcategory][currentTemplate.title];
+                }
+            }
+
+            templates[category][subcategory][title] = message;
+            saveTemplates();
+            renderCategories();
+            closeModal();
+            showToast('✓ Template guardado exitosamente', 'success');
+
+            // Limpiar selección si era edición
+            if (editMode) {
+                document.getElementById('textDisplay').classList.add('empty');
+                document.getElementById('textDisplay').innerHTML = '<div class="empty-icon">📝</div><div>Seleccione un template del menú lateral</div>';
+                document.getElementById('currentTitle').textContent = 'Seleccione un template';
+                document.getElementById('currentPath').textContent = '';
+                document.getElementById('btnEdit').style.display = 'none';
+                document.getElementById('btnDelete').style.display = 'none';
+                currentTemplate = null;
+            }
+        }
+
+        // Editar template
+        function editTemplate() {
+            if (!currentTemplate) return;
+
+            editMode = true;
+            const { category, subcategory, title } = currentTemplate;
+            const message = templates[category][subcategory][title];
+
+            document.getElementById('modalTitle').textContent = '✏️ Editar Template';
+            document.getElementById('categorySelect').value = category;
+            document.getElementById('subcategory').value = subcategory;
+            document.getElementById('templateTitle').value = title;
+            document.getElementById('templateMessage').value = message.replace(/\\n/g, '\n');
+            
+            document.getElementById('templateModal').classList.add('show');
+        }
+
+        // Eliminar template
+        function deleteTemplate() {
+            if (!currentTemplate) return;
+
+            if (!confirm('¿Está seguro de eliminar este template?')) return;
+
+            const { category, subcategory, title } = currentTemplate;
+            delete templates[category][subcategory][title];
+
+            // Limpiar subcategoría si está vacía
+            if (Object.keys(templates[category][subcategory]).length === 0) {
+                delete templates[category][subcategory];
+            }
+
+            // Limpiar categoría si está vacía
+            if (Object.keys(templates[category]).length === 0) {
+                delete templates[category];
+            }
+
+            saveTemplates();
+            renderCategories();
+
+            document.getElementById('textDisplay').classList.add('empty');
+            document.getElementById('textDisplay').innerHTML = '<div class="empty-icon">📝</div><div>Seleccione un template del menú lateral</div>';
+            document.getElementById('currentTitle').textContent = 'Seleccione un template';
+            document.getElementById('currentPath').textContent = '';
+            document.getElementById('btnEdit').style.display = 'none';
+            document.getElementById('btnDelete').style.display = 'none';
+            currentTemplate = null;
+
+            showToast('✓ Template eliminado', 'success');
+        }
+
+        // Filtrar templates
+        function filterTemplates() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const allBtns = document.querySelectorAll('.template-btn');
+            const allSubcategories = document.querySelectorAll('.subcategory');
+            const allCategories = document.querySelectorAll('.category');
+
+            if (!query) {
+                allBtns.forEach(btn => btn.style.display = 'block');
+                allSubcategories.forEach(sub => sub.style.display = 'block');
+                allCategories.forEach(cat => cat.style.display = 'block');
+                return;
+            }
+
+            allBtns.forEach(btn => {
+                const text = btn.textContent.toLowerCase();
+                btn.style.display = text.includes(query) ? 'block' : 'none';
+            });
+
+            allSubcategories.forEach(sub => {
+                const hasVisibleBtn = Array.from(sub.querySelectorAll('.template-btn'))
+                    .some(btn => btn.style.display !== 'none');
+                sub.style.display = hasVisibleBtn ? 'block' : 'none';
+            });
+
+            allCategories.forEach(cat => {
+                const hasVisibleSub = Array.from(cat.querySelectorAll('.subcategory'))
+                    .some(sub => sub.style.display !== 'none');
+                cat.style.display = hasVisibleSub ? 'block' : 'none';
+                
+                if (hasVisibleSub) {
+                    const header = cat.querySelector('.category-header');
+                    const subContainer = cat.querySelector('.subcategories');
+                    header.classList.add('active');
+                    subContainer.classList.add('active');
+                }
+            });
+        }
+
+        // Toggle menú móvil
+        function toggleMobileMenu() {
+            document.getElementById('sidebar').classList.toggle('mobile-open');
+        }
+
+        // Mostrar toast
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const messageEl = document.getElementById('toastMessage');
+            
+            toast.className = `toast ${type}`;
+            messageEl.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Cerrar modal con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').classList.remove('mobile-open');
+                }
+            }
+        });
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('templateModal').addEventListener('click', (e) => {
+            if (e.target.id === 'templateModal') {
+                closeModal();
+            }
+        });
+
+        // Inicializar
+        window.onload = loadTemplates;
+    </script>
+</body>
+</html>
