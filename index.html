@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Templates 1Win - Sistema Profesional</title>
+    <title>Templates 1Win - Sistema Profesional con AI</title>
     <style>
         :root {
             --primary: #6366f1;
@@ -16,6 +16,7 @@
             --light: #f8fafc;
             --gray: #64748b;
             --border: #e2e8f0;
+            --ai-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         * {
@@ -67,7 +68,12 @@
             font-size: 32px;
         }
 
-        .btn-add {
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-add, .btn-chat {
             background: white;
             color: var(--primary);
             border: none;
@@ -82,7 +88,18 @@
             gap: 8px;
         }
 
-        .btn-add:hover {
+        .btn-chat {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .btn-add:hover, .btn-chat:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(255,255,255,0.3);
         }
@@ -323,6 +340,291 @@
             background: #dc2626;
         }
 
+        /* Chat Modal */
+        .chat-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .chat-modal.show {
+            display: flex;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 900px;
+            height: 85vh;
+            max-height: 700px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+            overflow: hidden;
+            animation: chatSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes chatSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(100px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .chat-header {
+            background: var(--ai-gradient);
+            color: white;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .chat-header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .ai-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-close-chat {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .btn-close-chat:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            background: linear-gradient(to bottom, #fafafa 0%, #ffffff 100%);
+        }
+
+        .chat-message {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            animation: messageSlideIn 0.3s ease-out;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .user-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .ai-avatar {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .message-content {
+            flex: 1;
+            background: white;
+            padding: 14px 18px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+        }
+
+        .chat-message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+
+        .chat-message.ai .message-content {
+            background: white;
+        }
+
+        .message-text {
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: var(--gray);
+            margin-top: 6px;
+        }
+
+        .chat-message.user .message-time {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .typing-indicator {
+            display: none;
+            gap: 12px;
+            padding: 20px 0;
+        }
+
+        .typing-indicator.show {
+            display: flex;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .chat-input-container {
+            padding: 20px 24px;
+            background: white;
+            border-top: 1px solid var(--border);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: none;
+            max-height: 120px;
+            transition: all 0.3s;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .btn-send {
+            background: var(--ai-gradient);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-send:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .quick-questions {
+            display: flex;
+            gap: 8px;
+            padding: 12px 24px;
+            overflow-x: auto;
+            background: #f8f9fa;
+            border-top: 1px solid var(--border);
+        }
+
+        .quick-question {
+            background: white;
+            border: 2px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 13px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .quick-question:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
         /* Modal */
         .modal {
             display: none;
@@ -441,7 +743,7 @@
             display: none;
             align-items: center;
             gap: 12px;
-            z-index: 2000;
+            z-index: 3000;
             animation: toastSlideIn 0.3s ease-out;
         }
 
@@ -479,12 +781,13 @@
 
         /* Stats Badge */
         .stats-badge {
-            background: rgba(99, 102, 241, 0.1);
-            color: var(--primary);
+            background: rgba(255,255,255,0.2);
+            color: white;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
+            backdrop-filter: blur(10px);
         }
 
         /* Responsive */
@@ -508,7 +811,12 @@
                 font-size: 20px;
             }
 
-            .btn-add {
+            .header-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .btn-add, .btn-chat {
                 width: 100%;
                 justify-content: center;
             }
@@ -545,32 +853,45 @@
                 justify-content: center;
             }
 
+            .chat-container {
+                max-height: 95vh;
+                border-radius: 0;
+            }
+
+            .chat-header {
+                border-radius: 0;
+            }
+
+            .quick-questions {
+                flex-wrap: nowrap;
+            }
+
+            .mobile-menu-btn {
+                display: block !important;
+            }
+
             .toast {
                 right: 20px;
                 left: 20px;
                 bottom: 20px;
             }
-
-            .mobile-menu-btn {
-                display: block !important;
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                width: 60px;
-                height: 60px;
-                border-radius: 50%;
-                background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-                color: white;
-                border: none;
-                font-size: 24px;
-                cursor: pointer;
-                box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
-                z-index: 99;
-            }
         }
 
         .mobile-menu-btn {
             display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+            z-index: 99;
         }
 
         /* Scrollbar */
@@ -591,6 +912,28 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--dark);
         }
+
+        .welcome-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .welcome-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .welcome-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .welcome-text {
+            color: var(--gray);
+            font-size: 15px;
+        }
     </style>
 </head>
 <body>
@@ -601,10 +944,16 @@
                 Templates 1Win
                 <span class="stats-badge" id="templateCount">0 templates</span>
             </h1>
-            <button class="btn-add" onclick="openModal()">
-                <span>➕</span>
-                Agregar Template
-            </button>
+            <div class="header-actions">
+                <button class="btn-chat" onclick="openChatModal()">
+                    <span>🤖</span>
+                    Asistente AI
+                </button>
+                <button class="btn-add" onclick="openModal()">
+                    <span>➕</span>
+                    Agregar
+                </button>
+            </div>
         </div>
 
         <div class="main-layout">
@@ -631,7 +980,7 @@
 
                 <div class="text-display empty" id="textDisplay">
                     <div class="empty-icon">📝</div>
-                    <div>Seleccione un template del menú lateral</div>
+                    <div>Seleccione un template del menú lateral o use el Asistente AI</div>
                 </div>
 
                 <div class="action-buttons">
@@ -655,7 +1004,70 @@
     <!-- Mobile Menu Button -->
     <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
 
-    <!-- Modal -->
+    <!-- Chat Modal -->
+    <div class="chat-modal" id="chatModal">
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-header-title">
+                    <span>🤖</span>
+                    <span>Asistente AI 1Win</span>
+                    <span class="ai-badge">Powered by Claude</span>
+                </div>
+                <button class="btn-close-chat" onclick="closeChatModal()">×</button>
+            </div>
+
+            <div class="quick-questions">
+                <div class="quick-question" onclick="askQuickQuestion('¿Cómo realizar un depósito?')">
+                    💰 ¿Cómo depositar?
+                </div>
+                <div class="quick-question" onclick="askQuickQuestion('¿Cómo hacer un retiro?')">
+                    💸 ¿Cómo retirar?
+                </div>
+                <div class="quick-question" onclick="askQuickQuestion('¿Qué son las 1win coins?')">
+                    🪙 1Win Coins
+                </div>
+                <div class="quick-question" onclick="askQuickQuestion('¿Qué hacer si mi depósito no se refleja?')">
+                    ❓ Depósito no refleja
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="welcome-message">
+                    <div class="welcome-icon">🤖</div>
+                    <div class="welcome-title">¡Hola! Soy tu Asistente AI</div>
+                    <div class="welcome-text">
+                        Puedo ayudarte con cualquier consulta sobre depósitos, retiros, bonos y más.
+                        <br>¡Pregúntame lo que necesites!
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="message-avatar ai-avatar">🤖</div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <textarea 
+                        class="chat-input" 
+                        id="chatInput" 
+                        placeholder="Escribe tu consulta aquí..."
+                        rows="1"
+                        onkeydown="handleChatKeydown(event)"
+                    ></textarea>
+                    <button class="btn-send" id="btnSend" onclick="sendMessage()">
+                        <span>📤</span>
+                        Enviar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Modal -->
     <div class="modal" id="templateModal">
         <div class="modal-content">
             <div class="modal-header" id="modalTitle">➕ Agregar Nuevo Template</div>
@@ -710,6 +1122,7 @@
         let templates = {};
         let currentTemplate = null;
         let editMode = false;
+        let chatHistory = [];
 
         // Datos iniciales del Excel
         const initialData = {
@@ -724,8 +1137,8 @@
                     "Captura de pantalla de evidencia": "Por favor, envíe una captura de pantalla de la situación que está presentando para poder corroborar su caso."
                 },
                 "Despedidas": {
-                    "Sin reacción del usuario": "Si por ahora no es buen momento con la atención, le agradezco su contacto y espero que podamos platicar mas adelante para continuar ayudándole.\\n¡Tenga buen día!",
-                    "Cliente satisfecho": "Me alegro de haberle podido ayudar el día de hoy, seguimos atentos para ayudarle.\\n¡Tenga un excelente día!"
+                    "Sin reacción del usuario": "Si por ahora no es buen momento con la atención, le agradezco su contacto y espero que podamos platicar mas adelante para continuar ayudándole.\n¡Tenga buen día!",
+                    "Cliente satisfecho": "Me alegro de haberle podido ayudar el día de hoy, seguimos atentos para ayudarle.\n¡Tenga un excelente día!"
                 }
             },
             "Depositos": {
@@ -736,76 +1149,77 @@
                     "Estado de cuenta o extracto bancario": "Por favor, envíe un estado de cuenta, extracto bancario o estado de movimientos (Según lo conozcan en su banco) para poder revisar su caso."
                 },
                 "Información general": {
-                    "¿Cómo depositar?": "Para realizar un deposito es muy sencillo.\\n\\nDiríjase al botón \"recarga\", seleccione su método de pago de preferencia, especifique el monto y el resto de información que se solicite y al final realice el pago.",
+                    "¿Cómo depositar?": "Para realizar un deposito es muy sencillo.\n\nDiríjase al botón \"recarga\", seleccione su método de pago de preferencia, especifique el monto y el resto de información que se solicite y al final realice el pago.",
                     "No encuentro un método de pago": "En este caso, significa que ahora mismo ese método no estaría disponible, le recomiendo utilizar otro método de pago que si se encuentre activo."
                 },
                 "Estatus": {
                     "Depositado": "He revisado su cuenta y el deposito indicado ya se encuentra pagado, por favor, revíselo en su histórico de pago en su cuenta de juego.",
-                    "Depositó un monto distinto": "He revisado su cuenta, pero no localizo su solicitud con el monto transferido. Revisaré más a fondo.\\nRecuerde que, si ha solicitado depositar un monto, debe transferir exactamente el mismo monto; de lo contrario, su pago puede demorar más de lo esperado.",
-                    "Dentro de las 24 horas": "La recarga puede tardar hasta 24 horas en reflejarse, aunque normalmente se acredita antes.\\nSi pasado ese tiempo no ve los fondos, contáctenos nuevamente por este medio.",
-                    "Cancelado": "Su depósito no pudo procesarse porque fue cancelado.\\nSe generará un ticket con soporte para gestionar la devolución de su saldo, aunque aún no vea el reembolso reflejado.",
-                    "Más de 24 horas sin acreditar": "El plazo máximo de acreditación (24 horas) ya fue excedido, por lo que existe un error.\\nGeneraré un ticket a soporte para solucionarlo, ya sea acreditando sus fondos o devolviendo el saldo según la revisión.",
-                    "No existe solicitud": "He revisado su cuenta y no existe ninguna solicitud en 1win que coincida con el monto, fecha y hora de su comprobante.\\nPor favor confirme si reutilizó datos de una solicitud anterior o si realizó primero la transferencia sin generar la solicitud."
+                    "Depositó un monto distinto": "He revisado su cuenta, pero no localizo su solicitud con el monto transferido. Revisaré más a fondo.\nRecuerde que, si ha solicitado depositar un monto, debe transferir exactamente el mismo monto; de lo contrario, su pago puede demorar más de lo esperado.",
+                    "Dentro de las 24 horas": "La recarga puede tardar hasta 24 horas en reflejarse, aunque normalmente se acredita antes.\nSi pasado ese tiempo no ve los fondos, contáctenos nuevamente por este medio.",
+                    "Cancelado": "Su depósito no pudo procesarse porque fue cancelado.\nSe generará un ticket con soporte para gestionar la devolución de su saldo, aunque aún no vea el reembolso reflejado.",
+                    "Más de 24 horas sin acreditar": "El plazo máximo de acreditación (24 horas) ya fue excedido, por lo que existe un error.\nGeneraré un ticket a soporte para solucionarlo, ya sea acreditando sus fondos o devolviendo el saldo según la revisión.",
+                    "No existe solicitud": "He revisado su cuenta y no existe ninguna solicitud en 1win que coincida con el monto, fecha y hora de su comprobante.\nPor favor confirme si reutilizó datos de una solicitud anterior o si realizó primero la transferencia sin generar la solicitud."
                 },
                 "Cryptomoneda": {
-                    "Monto menor al minimo": "El pago no puede procesarse porque no se cumplieron las condiciones.\\nAl usar criptodivisas, verifique el monto mínimo y la red correcta, ya que un error puede provocar la pérdida irreversible de los fondos.",
-                    "No llegó en 30 min": "Se generará un ticket con soporte para revisar su transacción.\\nEnvíe por escrito el Txid, la dirección destino y la dirección origen."
+                    "Monto menor al minimo": "El pago no puede procesarse porque no se cumplieron las condiciones.\nAl usar criptodivisas, verifique el monto mínimo y la red correcta, ya que un error puede provocar la pérdida irreversible de los fondos.",
+                    "No llegó en 30 min": "Se generará un ticket con soporte para revisar su transacción.\nEnvíe por escrito el Txid, la dirección destino y la dirección origen."
                 },
                 "Jira": {
-                    "Seguimiento: Recien creado": "He dado seguimiento a su caso: ya está creado, pero aún no tiene comentarios por ser reciente.\\nSerá atendido según la carga y el orden de soporte, y permanece en espera de revisión.",
-                    "Seguimiento: En revisión": "Entendemos su preocupación y agradecemos su paciencia.\\nSu ticket está en espera de respuesta del proveedor financiero y estamos trabajando para agilizar la resolución; quedamos atentos ante cualquier consulta adicional.",
-                    "Seguimiento: Tiempo excedido": "He dado seguimiento a su caso y, al exceder el tiempo estándar, solicitaremos su priorización inmediata.\\nLa demora se debe a que el proceso está detenido en el proveedor financiero; ya se envió una reclamación y le informaremos cualquier novedad.",
-                    "Solicitar estado de cuenta.": "Su saldo ya fue reembolsado a su cuenta financiera.\\nSi no lo ve reflejado, envíe un estado de cuenta/extracto desde la fecha del depósito hasta hoy para verificarlo; si no sabe cómo obtenerlo, solicite ayuda a su banco y contáctenos nuevamente."
+                    "Seguimiento: Recien creado": "He dado seguimiento a su caso: ya está creado, pero aún no tiene comentarios por ser reciente.\nSerá atendido según la carga y el orden de soporte, y permanece en espera de revisión.",
+                    "Seguimiento: En revisión": "Entendemos su preocupación y agradecemos su paciencia.\nSu ticket está en espera de respuesta del proveedor financiero y estamos trabajando para agilizar la resolución; quedamos atentos ante cualquier consulta adicional.",
+                    "Seguimiento: Tiempo excedido": "He dado seguimiento a su caso y, al exceder el tiempo estándar, solicitaremos su priorización inmediata.\nLa demora se debe a que el proceso está detenido en el proveedor financiero; ya se envió una reclamación y le informaremos cualquier novedad.",
+                    "Solicitar estado de cuenta.": "Su saldo ya fue reembolsado a su cuenta financiera.\nSi no lo ve reflejado, envíe un estado de cuenta/extracto desde la fecha del depósito hasta hoy para verificarlo; si no sabe cómo obtenerlo, solicite ayuda a su banco y contáctenos nuevamente."
                 }
             },
             "Retiros": {
                 "No puede retirar": {
-                    "No ha jugado el 100%": "Los retiros se habilitan tras apostar el 100% del depósito (deportes, casino o póker).\\nAún debe jugar XXX para activarlos; le recomendamos apuestas pequeñas para reducir riesgo. En deportes, la apuesta debe finalizar para que cuente."
+                    "No ha jugado el 100%": "Los retiros se habilitan tras apostar el 100% del depósito (deportes, casino o póker).\nAún debe jugar XXX para activarlos; le recomendamos apuestas pequeñas para reducir riesgo. En deportes, la apuesta debe finalizar para que cuente."
                 },
                 "solicitud rechazada": {
-                    "Monto devuelto y apostado": "Su retiro fue rechazado y el saldo regresó de inmediato a su cuenta de juego, donde posteriormente fue apostado.\\nEl rechazo provino del proveedor financiero; le recomendamos usar otro método de pago y revisar el estado de sus solicitudes en el desglose de cuenta.",
-                    "Motivo de rechazo": "Los rechazos pueden deberse a múltiples intentos, bloqueos o límites bancarios, transacciones internacionales, intermitencias o datos incorrectos.\\nComo el rechazo proviene del banco, no vemos el motivo exacto; intente nuevamente verificando cuidadosamente todos los datos."
+                    "Monto devuelto y apostado": "Su retiro fue rechazado y el saldo regresó de inmediato a su cuenta de juego, donde posteriormente fue apostado.\nEl rechazo provino del proveedor financiero; le recomendamos usar otro método de pago y revisar el estado de sus solicitudes en el desglose de cuenta.",
+                    "Motivo de rechazo": "Los rechazos pueden deberse a múltiples intentos, bloqueos o límites bancarios, transacciones internacionales, intermitencias o datos incorrectos.\nComo el rechazo proviene del banco, no vemos el motivo exacto; intente nuevamente verificando cuidadosamente todos los datos."
                 },
                 "Estatus": {
-                    "Retiro depositado": "Su retiro figura como transferido a la información indicada durante la solicitud.\\nSi no recibió el monto, envíe un extracto bancario o estado de cuenta en PDF para generar el reclamo; si no sabe obtenerlo, contacte a su proveedor financiero.",
-                    "En tiempo 24 horas": "El retiro de fondos puede tardar hasta 24 horas, según el procedimiento estándar.\\nSi el plazo se excede, contáctenos por este chat para verificar la información.",
-                    "Sin procesamiento en 24 horas": "Su retiro no fue procesado por una posible intermitencia; le recomendamos cancelarlo y volver a intentarlo.\\nPuede cancelarlo si está pendiente (en amarillo) desde Desglose → ícono X.",
-                    "Mas de 24 horas": "Su retiro excedió el plazo máximo de 24 horas, por lo que se detecta un error.\\nSe generará un ticket con soporte para acreditar el saldo o devolverlo a su cuenta."
+                    "Retiro depositado": "Su retiro figura como transferido a la información indicada durante la solicitud.\nSi no recibió el monto, envíe un extracto bancario o estado de cuenta en PDF para generar el reclamo; si no sabe obtenerlo, contacte a su proveedor financiero.",
+                    "En tiempo 24 horas": "El retiro de fondos puede tardar hasta 24 horas, según el procedimiento estándar.\nSi el plazo se excede, contáctenos por este chat para verificar la información.",
+                    "Sin procesamiento en 24 horas": "Su retiro no fue procesado por una posible intermitencia; le recomendamos cancelarlo y volver a intentarlo.\nPuede cancelarlo si está pendiente (en amarillo) desde Desglose → ícono X.",
+                    "Mas de 24 horas": "Su retiro excedió el plazo máximo de 24 horas, por lo que se detecta un error.\nSe generará un ticket con soporte para acreditar el saldo o devolverlo a su cuenta."
                 },
                 "Cuenta bloqueada": {
-                    "Bloqueo manual": "Debido al estatus de su retiro, debe escribir a security@1win.social\\n indicando su ID de cuenta y el motivo.\\nEste paso es necesario para continuar con el retiro; el tiempo de respuesta varía y se recomienda vincular un correo personal en Ajustes para agilizar la atención."
+                    "Bloqueo manual": "Debido al estatus de su retiro, debe escribir a security@1win.social\n indicando su ID de cuenta y el motivo.\nEste paso es necesario para continuar con el retiro; el tiempo de respuesta varía y se recomienda vincular un correo personal en Ajustes para agilizar la atención."
                 },
                 "Información general": {
-                    "Como retirar": "Para realizar un retiro: Perfil → Retiros, elija el método disponible, complete los datos solicitados y ingrese el monto (≤ a su saldo).\\nEsto generará la solicitud de retiro, que será procesada posteriormente.",
-                    "Monto minimo y maximo": "Durante el retiro verá un rango mínimo y máximo permitido junto al campo del monto.\\nCada método de pago tiene límites distintos, por lo que le recomendamos verificarlos antes de retirar.",
-                    "No apárece una opción de pago": "Actualmente, solo están disponibles los métodos que aparecen para retiro; si uno no figura, no puede usarse por ahora, aunque antes haya estado disponible.\\nPuede registrarse en el método activo o esperar a que el anterior vuelva a habilitarse."
+                    "Como retirar": "Para realizar un retiro: Perfil → Retiros, elija el método disponible, complete los datos solicitados y ingrese el monto (≤ a su saldo).\nEsto generará la solicitud de retiro, que será procesada posteriormente.",
+                    "Monto minimo y maximo": "Durante el retiro verá un rango mínimo y máximo permitido junto al campo del monto.\nCada método de pago tiene límites distintos, por lo que le recomendamos verificarlos antes de retirar.",
+                    "No apárece una opción de pago": "Actualmente, solo están disponibles los métodos que aparecen para retiro; si uno no figura, no puede usarse por ahora, aunque antes haya estado disponible.\nPuede registrarse en el método activo o esperar a que el anterior vuelva a habilitarse."
                 }
             },
             "Bonos y promociones": {
                 "1win coin": {
-                    "Que es 1win coin": "Las Coins son una recompensa para clientes leales y se obtienen al apostar en tragamonedas del casino y apuestas deportivas con dinero real.\\nNo aplican en casino en vivo, ruleta electrónica ni blackjack; no dependen de ganar o perder y no se acreditan en apuestas devueltas o vendidas. Al reunir el mínimo, pueden canjearse por dinero real según las Reglas y la moneda.",
-                    "No puedo canjearlas": "El canje requiere un mínimo de 1200 1win coins.\\nPuede acumularlas apostando en casino o deportes (sin importar el resultado) y completando tareas en la sección FreeMoney.",
-                    "Como canjearlos": "Para canjear coins: icono de perfil → sección Coin → Intercambio → seleccione la cantidad y Canjear.\\nEl mínimo y el tipo de cambio dependen de la moneda; consulte Reglas para más detalles."
+                    "Que es 1win coin": "Las Coins son una recompensa para clientes leales y se obtienen al apostar en tragamonedas del casino y apuestas deportivas con dinero real.\nNo aplican en casino en vivo, ruleta electrónica ni blackjack; no dependen de ganar o perder y no se acreditan en apuestas devueltas o vendidas. Al reunir el mínimo, pueden canjearse por dinero real según las Reglas y la moneda.",
+                    "No puedo canjearlas": "El canje requiere un mínimo de 1200 1win coins.\nPuede acumularlas apostando en casino o deportes (sin importar el resultado) y completando tareas en la sección FreeMoney.",
+                    "Como canjearlos": "Para canjear coins: icono de perfil → sección Coin → Intercambio → seleccione la cantidad y Canjear.\nEl mínimo y el tipo de cambio dependen de la moneda; consulte Reglas para más detalles."
                 },
                 "Freespins": {
-                    "Como se usa lo ganado": "Las ganancias de giros gratis se liberan solo tras cumplir las condiciones de la promoción.\\nDebe jugar con saldo real en tragamonedas el monto indicado en la barra antes de que el contador termine; al hacerlo, se acredita automáticamente, sin importar el resultado.",
-                    "¿Qué son?": "Los FreeSpins son giros promocionales que te permiten jugar slots sin usar tu saldo.\\nLas ganancias se acreditan si cumples el requisito de apuesta, algunos requieren depósito, tienen vigencia limitada y umbrales de juego."
+                    "Como se usa lo ganado": "Las ganancias de giros gratis se liberan solo tras cumplir las condiciones de la promoción.\nDebe jugar con saldo real en tragamonedas el monto indicado en la barra antes de que el contador termine; al hacerlo, se acredita automáticamente, sin importar el resultado.",
+                    "¿Qué son?": "Los FreeSpins son giros promocionales que te permiten jugar slots sin usar tu saldo.\nLas ganancias se acreditan si cumples el requisito de apuesta, algunos requieren depósito, tienen vigencia limitada y umbrales de juego."
                 },
                 "Bonus code": {
-                    "¿Qué son?": "Los bonus codes/vouchers otorgan beneficios como saldo, giros gratis u otros extras.\\nSe entregan por redes sociales, Telegram oficial, notificaciones, SMS o vía VIP; para obtenerlos, únase al grupo oficial de Telegram.",
-                    "¿Cómo canjearlos?": "Para canjear su bonus code: Perfil → sección Bonus Code, ingrese el código y presione Canjear.\\nSi presenta alguna dificultad, indíquelo.",
-                    "¿Cómo canjearlos? En juegos": "Para canjear un bonus code en un juego: ingrese al juego indicado con saldo, abra el menú, seleccione Bonus Code, ingrese el código y canjee.\\nSi el código está en otra moneda, verifique las restricciones y use la correcta para evitar errores.",
-                    "Error de limite de usos": "El error indica que el código está deshabilitado porque alcanzó su límite de uso.\\nLe recomendamos activar notificaciones para usar los códigos apenas estén disponibles."
+                    "¿Qué son?": "Los bonus codes/vouchers otorgan beneficios como saldo, giros gratis u otros extras.\nSe entregan por redes sociales, Telegram oficial, notificaciones, SMS o vía VIP; para obtenerlos, únase al grupo oficial de Telegram.",
+                    "¿Cómo canjearlos?": "Para canjear su bonus code: Perfil → sección Bonus Code, ingrese el código y presione Canjear.\nSi presenta alguna dificultad, indíquelo.",
+                    "¿Cómo canjearlos? En juegos": "Para canjear un bonus code en un juego: ingrese al juego indicado con saldo, abra el menú, seleccione Bonus Code, ingrese el código y canjee.\nSi el código está en otra moneda, verifique las restricciones y use la correcta para evitar errores.",
+                    "Error de limite de usos": "El error indica que el código está deshabilitado porque alcanzó su límite de uso.\nLe recomendamos activar notificaciones para usar los códigos apenas estén disponibles."
                 }
             },
             "1win Tokens": {
                 "Información general": {
-                    "¿Qué son?": "Los tokens 1Win son fondos virtuales del Clicker que no se canjean por dinero real.\\nPor ahora solo puede acumularlos o usarlos en apuestas dentro del Clicker; su futura conversión dependerá del interés de los usuarios."
+                    "¿Qué son?": "Los tokens 1Win son fondos virtuales del Clicker que no se canjean por dinero real.\nPor ahora solo puede acumularlos o usarlos en apuestas dentro del Clicker; su futura conversión dependerá del interés de los usuarios."
                 }
             }
         };
 
-        // Cargar templates
+        // ============ TEMPLATE FUNCTIONS ============
+        
         function loadTemplates() {
             const saved = localStorage.getItem('templates_1win');
             if (saved) {
@@ -818,13 +1232,11 @@
             updateStats();
         }
 
-        // Guardar templates
         function saveTemplates() {
             localStorage.setItem('templates_1win', JSON.stringify(templates));
             updateStats();
         }
 
-        // Actualizar estadísticas
         function updateStats() {
             let count = 0;
             Object.keys(templates).forEach(cat => {
@@ -835,7 +1247,6 @@
             document.getElementById('templateCount').textContent = `${count} templates`;
         }
 
-        // Renderizar categorías
         function renderCategories() {
             const container = document.getElementById('categoriesList');
             container.innerHTML = '';
@@ -881,7 +1292,6 @@
                 container.appendChild(categoryDiv);
             });
 
-            // Poblar select del modal
             const select = document.getElementById('categorySelect');
             select.innerHTML = '<option value="">-- Seleccione --</option>';
             Object.keys(templates).sort().forEach(cat => {
@@ -892,7 +1302,6 @@
             });
         }
 
-        // Toggle categoría
         function toggleCategory(category, element) {
             const subContainer = document.getElementById(`sub-${category}`);
             const allHeaders = document.querySelectorAll('.category-header');
@@ -910,7 +1319,6 @@
             subContainer.classList.toggle('active');
         }
 
-        // Seleccionar template
         function selectTemplate(category, subcategory, title, button) {
             currentTemplate = { category, subcategory, title };
             
@@ -929,13 +1337,11 @@
             document.getElementById('btnEdit').style.display = 'flex';
             document.getElementById('btnDelete').style.display = 'flex';
 
-            // Cerrar menú móvil si está abierto
             if (window.innerWidth <= 768) {
                 document.getElementById('sidebar').classList.remove('mobile-open');
             }
         }
 
-        // Copiar texto
         function copyText() {
             const display = document.getElementById('textDisplay');
             const text = display.textContent;
@@ -952,7 +1358,6 @@
             });
         }
 
-        // Abrir modal
         function openModal() {
             editMode = false;
             document.getElementById('modalTitle').textContent = '➕ Agregar Nuevo Template';
@@ -960,12 +1365,10 @@
             document.getElementById('templateModal').classList.add('show');
         }
 
-        // Cerrar modal
         function closeModal() {
             document.getElementById('templateModal').classList.remove('show');
         }
 
-        // Guardar template
         function saveTemplate() {
             const categorySelect = document.getElementById('categorySelect').value;
             const newCategory = document.getElementById('newCategory').value.trim();
@@ -988,7 +1391,6 @@
             if (!templates[category][subcategory]) templates[category][subcategory] = {};
 
             if (editMode && currentTemplate) {
-                // Eliminar el anterior si cambió
                 if (currentTemplate.category !== category || 
                     currentTemplate.subcategory !== subcategory || 
                     currentTemplate.title !== title) {
@@ -1002,7 +1404,6 @@
             closeModal();
             showToast('✓ Template guardado exitosamente', 'success');
 
-            // Limpiar selección si era edición
             if (editMode) {
                 document.getElementById('textDisplay').classList.add('empty');
                 document.getElementById('textDisplay').innerHTML = '<div class="empty-icon">📝</div><div>Seleccione un template del menú lateral</div>';
@@ -1014,7 +1415,6 @@
             }
         }
 
-        // Editar template
         function editTemplate() {
             if (!currentTemplate) return;
 
@@ -1031,7 +1431,6 @@
             document.getElementById('templateModal').classList.add('show');
         }
 
-        // Eliminar template
         function deleteTemplate() {
             if (!currentTemplate) return;
 
@@ -1040,12 +1439,10 @@
             const { category, subcategory, title } = currentTemplate;
             delete templates[category][subcategory][title];
 
-            // Limpiar subcategoría si está vacía
             if (Object.keys(templates[category][subcategory]).length === 0) {
                 delete templates[category][subcategory];
             }
 
-            // Limpiar categoría si está vacía
             if (Object.keys(templates[category]).length === 0) {
                 delete templates[category];
             }
@@ -1064,7 +1461,6 @@
             showToast('✓ Template eliminado', 'success');
         }
 
-        // Filtrar templates
         function filterTemplates() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const allBtns = document.querySelectorAll('.template-btn');
@@ -1103,12 +1499,10 @@
             });
         }
 
-        // Toggle menú móvil
         function toggleMobileMenu() {
             document.getElementById('sidebar').classList.toggle('mobile-open');
         }
 
-        // Mostrar toast
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             const messageEl = document.getElementById('toastMessage');
@@ -1122,21 +1516,250 @@
             }, 3000);
         }
 
-        // Cerrar modal con ESC
+        // ============ CHAT FUNCTIONS ============
+
+        function openChatModal() {
+            document.getElementById('chatModal').classList.add('show');
+            document.getElementById('chatInput').focus();
+        }
+
+        function closeChatModal() {
+            document.getElementById('chatModal').classList.remove('show');
+        }
+
+        function askQuickQuestion(question) {
+            document.getElementById('chatInput').value = question;
+            sendMessage();
+        }
+
+        function handleChatKeydown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Añadir mensaje del usuario
+            addChatMessage(message, 'user');
+            input.value = '';
+            
+            // Auto-resize
+            input.style.height = 'auto';
+
+            // Mostrar indicador de escritura
+            document.getElementById('typingIndicator').classList.add('show');
+            document.getElementById('btnSend').disabled = true;
+
+            // Simular procesamiento y buscar respuesta
+            try {
+                const response = await getAIResponse(message);
+                
+                // Ocultar indicador
+                document.getElementById('typingIndicator').classList.remove('show');
+                
+                // Añadir respuesta de AI
+                addChatMessage(response, 'ai');
+                
+            } catch (error) {
+                document.getElementById('typingIndicator').classList.remove('show');
+                addChatMessage('Lo siento, hubo un error al procesar tu consulta. Por favor, intenta de nuevo.', 'ai');
+            }
+            
+            document.getElementById('btnSend').disabled = false;
+        }
+
+        function addChatMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            // Remover mensaje de bienvenida si existe
+            const welcome = messagesContainer.querySelector('.welcome-message');
+            if (welcome) welcome.remove();
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}`;
+            
+            const time = new Date().toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar ${sender}-avatar">
+                    ${sender === 'user' ? '👤' : '🤖'}
+                </div>
+                <div class="message-content">
+                    <div class="message-text">${text}</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Guardar en historial
+            chatHistory.push({ role: sender === 'user' ? 'user' : 'assistant', content: text });
+        }
+
+        async function getAIResponse(userQuestion) {
+            // Construir base de conocimiento
+            const knowledgeBase = buildKnowledgeBase();
+            
+            // Usar Claude AI API
+            try {
+                const response = await fetch("https://api.anthropic.com/v1/messages", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        model: "claude-sonnet-4-20250514",
+                        max_tokens: 1000,
+                        messages: [
+                            {
+                                role: "user",
+                                content: `Eres un asistente experto de 1Win. Tu trabajo es ayudar a usuarios con consultas sobre depósitos, retiros, bonos y otros temas relacionados con 1Win.
+
+Base de conocimiento disponible:
+${knowledgeBase}
+
+Instrucciones:
+- Responde de manera profesional, amable y concisa
+- Usa la información de la base de conocimiento para responder
+- Si la pregunta no está relacionada con 1Win, indica amablemente que solo puedes ayudar con temas de 1Win
+- Sé directo y claro en tus respuestas
+- Usa saltos de línea cuando sea apropiado para mejor legibilidad
+
+Consulta del usuario: ${userQuestion}
+
+Proporciona una respuesta útil y profesional.`
+                            }
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.content && data.content[0]) {
+                    return data.content[0].text;
+                } else {
+                    throw new Error('Respuesta inválida de la API');
+                }
+                
+            } catch (error) {
+                console.error('Error con API:', error);
+                // Fallback a búsqueda local
+                return getLocalResponse(userQuestion);
+            }
+        }
+
+        function buildKnowledgeBase() {
+            let kb = "TEMPLATES DISPONIBLES:\n\n";
+            
+            Object.keys(templates).forEach(category => {
+                kb += `\n=== ${category.toUpperCase()} ===\n`;
+                Object.keys(templates[category]).forEach(subcategory => {
+                    kb += `\n-- ${subcategory} --\n`;
+                    Object.keys(templates[category][subcategory]).forEach(title => {
+                        const content = templates[category][subcategory][title];
+                        kb += `\n${title}:\n${content}\n`;
+                    });
+                });
+            });
+            
+            return kb;
+        }
+
+        function getLocalResponse(question) {
+            const q = question.toLowerCase();
+            
+            // Búsqueda simple por palabras clave
+            const keywords = {
+                'deposito': 'Depositos',
+                'depositar': 'Depositos',
+                'recarga': 'Depositos',
+                'recargar': 'Depositos',
+                'retiro': 'Retiros',
+                'retirar': 'Retiros',
+                'sacar': 'Retiros',
+                'bonus': 'Bonos y promociones',
+                'bono': 'Bonos y promociones',
+                'coin': 'Bonos y promociones',
+                'freespin': 'Bonos y promociones',
+                'giros': 'Bonos y promociones',
+                'token': '1win Tokens',
+                'comprobante': 'Depositos',
+                'pago': 'Depositos',
+                'rechazado': 'Retiros',
+                'bloqueado': 'Retiros',
+                'cryptomoneda': 'Depositos',
+                'crypto': 'Depositos'
+            };
+            
+            let responses = [];
+            
+            // Buscar coincidencias
+            for (let [keyword, category] of Object.entries(keywords)) {
+                if (q.includes(keyword)) {
+                    if (templates[category]) {
+                        Object.keys(templates[category]).forEach(subcategory => {
+                            Object.keys(templates[category][subcategory]).forEach(title => {
+                                const content = templates[category][subcategory][title];
+                                if (title.toLowerCase().includes(keyword) || 
+                                    content.toLowerCase().includes(keyword)) {
+                                    responses.push(`📌 ${title}:\n${content}`);
+                                }
+                            });
+                        });
+                    }
+                }
+            }
+            
+            if (responses.length > 0) {
+                return responses.slice(0, 3).join('\n\n---\n\n');
+            }
+            
+            return `Entiendo tu consulta sobre "${question}". 
+
+Te recomiendo revisar las siguientes secciones que podrían ayudarte:
+
+📁 Depósitos - Para información sobre recargas y pagos
+📁 Retiros - Para información sobre retiros de fondos
+📁 Bonos y promociones - Para información sobre coins, freespins y bonus codes
+📁 Generales - Para solicitudes de datos y otros temas
+
+¿Podrías ser más específico con tu consulta para poder ayudarte mejor?`;
+        }
+
+        // Event listeners
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeModal();
+                closeChatModal();
                 if (window.innerWidth <= 768) {
                     document.getElementById('sidebar').classList.remove('mobile-open');
                 }
             }
         });
 
-        // Cerrar modal al hacer clic fuera
         document.getElementById('templateModal').addEventListener('click', (e) => {
             if (e.target.id === 'templateModal') {
                 closeModal();
             }
+        });
+
+        document.getElementById('chatModal').addEventListener('click', (e) => {
+            if (e.target.id === 'chatModal') {
+                closeChatModal();
+            }
+        });
+
+        // Auto-resize textarea
+        document.getElementById('chatInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
         });
 
         // Inicializar
